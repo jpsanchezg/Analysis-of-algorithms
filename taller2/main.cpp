@@ -2,131 +2,174 @@
 #include <ctime>
 #include <cstdlib>
 #include <string.h>
+#include <vector>
 using namespace std;
-
 struct censo
 {
-    string numero;
+    int numero;
     string nombre;
     int edad;
     bool impuestos;
 };
 
-void llenarCenso(censo persona[], int n);
-bool verificarRepetidos(censo persona[], int tam, string numero);
-string llenarNumeroPersona(censo persona[], int pos);
+void llenarCenso(vector<censo> &persona, int n);
 
-// busqueda lineal
-void busquedaPorNombre(censo persona[], int tam, string nombre);
+string llenarNumeroPersona(vector<censo> persona, int pos);
+void imprimirNumeros(vector<censo> persona);
+
+void imprimirNombres(vector<censo> persona);
 
 // busqueda binaria
-void busquedaPorNumero(censo persona[], int tam, string numero);
+
+int busquedaPorNumero(vector<censo> &vec, int &item, int s1, int s2);
+
+int BusquedaBinaria(vector<censo> &vec, int &item);
+
+// busqueda lineal
+void busquedaPorNombre(vector<censo> persona, string nombre);
 
 int main()
 {
-    censo persona[5000];
-    llenarCenso(persona, 5000);
+    vector<censo> persona;
+    llenarCenso(persona, 500000); // llena el vector de censo
+    bool salir = false;
+
     do
     {
+        cout << "Censo de Poblacion" << endl;
         cout << "1. Busqueda por nombre" << endl;
+
         cout << "2. Busqueda por numero" << endl;
         cout << "3. Salir" << endl;
+        cout << "4. imprimir numeros" << endl;
+        cout << "5. imprimir nombres" << endl;
         int opcion;
         cin >> opcion;
         string nombre;
-        string numero;
-
+        int numero;
+        int pos;
         switch (opcion)
         {
         case 1:
             cout << "Ingrese nombre: ";
             cin >> nombre;
-            busquedaPorNombre(persona, 5000, nombre);
+            busquedaPorNombre(persona, nombre);
             break;
+
         case 2:
             cout << "Ingrese numero: ";
             cin >> numero;
-            busquedaPorNumero(persona, 5000, numero);
-            break;
-        case 3:
-            break;
-        }
-    }
-
-    void llenarCenso(censo persona[], int n)
-    {
-        char strrnd[10];
-        srand(time(NULL));
-
-        for (int i = 0; i < n; i++)
-        {
-            for (int i = 0; i <= 5; i++)
+            pos = BusquedaBinaria(persona, numero);
+            if (pos == numero)
             {
-                strrnd[i] = 33 + rand() % (126 - 33);
-            }
-            string tmp_string(strrnd);
-            persona[i].nombre = tmp_string;
-            persona[i].edad = rand() % (99 - 18 + 1) + 18;
-            persona[i].numero = llenarNumeroPersona(persona, i);
-
-            if (persona[i].edad < 65)
-            {
-                persona[i].impuestos = true;
+                cout << "Numero encontrado" << endl;
             }
             else
             {
-                persona[i].impuestos = false;
+                cout << "Numero no encontrado" << endl;
             }
-            persona[i].impuestos = true;
+            break;
+
+        case 3:
+            salir = true;
+            break;
+
+        case 4:
+            imprimirNumeros(persona);
+            break;
+
+        case 5:
+            imprimirNombres(persona);
+            break;
+
+        default:
+            cout << "Opcion no valida" << endl;
         }
-    }
-    string llenarNumeroPersona(censo persona[], int pos)
+    } while (!salir);
+}
+
+void llenarCenso(vector<censo> &persona, int n)
+{
+    char strrnd[10];
+    srand(time(NULL));
+    censo p;
+    for (int i = 0; i < n; i++)
     {
-        int num[10];
-        srand(time(NULL));
-        for (int i = 0; i <= 9; i++)
+        for (int i = 0; i <= 5; i++)
         {
-            num[i] = 0 + rand() % (9);
+            strrnd[i] = 65 + rand() % (90 - 65);
         }
-        string str;
-        for (int i : num)
+
+        string tmp_string(strrnd);
+
+        p.nombre = tmp_string;
+        p.edad = rand() % (99 - 18 + 1) + 18;
+        p.numero = rand() % (500000 + 1) + 0;
+        if (p.edad < 65)
         {
-            str.push_back(i + '0');
-        }
-        cout << str << endl;
-        if (pos == 0)
-        {
-            return str;
+            p.impuestos = true;
         }
         else
         {
-            if (verificarRepetidos(persona, 5000, str))
-            {
-                return llenarNumeroPersona(persona, pos);
-            }
-            else
-            {
-                return str;
-            }
+            p.impuestos = false;
         }
+        p.impuestos = true;
+        persona.push_back(p);
     }
+}
 
-    bool verificarRepetidos(censo persona[], int tam, string numero)
+void imprimirNumeros(vector<censo> persona)
+{
+    vector<censo> parr3(persona.begin(), persona.end());
+    for (vector<censo>::iterator it = persona.begin(); it != persona.end(); ++it)
     {
-        for (int i = 0; i < tam; i++)
+        cout << it->numero << endl;
+    }
+}
+
+void imprimirNombres(vector<censo> persona)
+{
+    vector<censo> parr3(persona.begin(), persona.end());
+    for (vector<censo>::iterator it = persona.begin(); it != persona.end(); ++it)
+    {
+        cout << it->nombre << endl;
+    }
+}
+
+void busquedaPorNombre(vector<censo> persona, string nombre)
+{
+    for (vector<censo>::iterator it = persona.begin(); it != persona.end(); ++it)
+    {
+        if (it->nombre == nombre)
         {
-            if (persona[i].numero == numero)
-            {
-                return true;
-            }
+            cout << "se encontro el numero que andas buscando" << endl;
+            cout << "Nombre: " << it->nombre << endl;
         }
-        return false;
     }
+}
 
-    void busquedaPorNombre(censo persona[], int tam, string nombre)
-    {
-    }
+int busquedaPorNumero(vector<censo> &vec, int &item, int s1, int s2)
+{
+    if (s1 > s2)
+        return -1;
 
-    void busquedaPorNumero(censo persona[], int tam, string numero)
+    auto middle = (s1 + s2) / 2;
+
+    if (item == middle)
     {
+        return middle;
     }
+    if (item > middle)
+    {
+        return busquedaPorNumero(vec, item, middle + 1, s2);
+    }
+    else
+    {
+        return busquedaPorNumero(vec, item, s1, middle - 1);
+    }
+}
+
+int BusquedaBinaria(vector<censo> &vec, int &item)
+{
+    return busquedaPorNumero(vec, item, 0, vec.size() - 1);
+}
