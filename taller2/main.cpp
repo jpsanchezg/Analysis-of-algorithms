@@ -148,28 +148,28 @@ void busquedaPorNombre(vector<censo> persona, string nombre)
     }
 }
 
-int busquedaPorNumero(vector<censo> &vec, int &item, int s1, int s2)
+int busquedaPorNumero(vector<censo> &vec, int &num, int s1, int s2)
 {
     if (s1 > s2)
         return -1;
 
-    auto middle = (s1 + s2) / 2;
+    auto m = (s1 + s2) / 2;
 
-    if (item == middle)
+    if (num == m)
     {
-        return middle;
+        return m;
     }
-    if (item > middle)
+    if (num > m)
     {
-        return busquedaPorNumero(vec, item, middle + 1, s2);
+        return busquedaPorNumero(vec, num, m + 1, s2);
     }
     else
     {
-        return busquedaPorNumero(vec, item, s1, middle - 1);
+        return busquedaPorNumero(vec, num, s1, m - 1);
     }
 }
 
-int BusquedaBinaria(vector<censo> &vec, int &item)
+int BusquedaBinaria(vector<censo> &vec, int &num)
 {
-    return busquedaPorNumero(vec, item, 0, vec.size() - 1);
+    return busquedaPorNumero(vec, num, 0, vec.size() - 1);
 }
