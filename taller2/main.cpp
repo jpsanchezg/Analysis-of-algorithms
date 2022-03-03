@@ -4,6 +4,9 @@
 #include <string.h>
 #include <vector>
 using namespace std;
+
+// hecho por juan pablo sanchez gaitan
+
 struct censo
 {
     int numero;
